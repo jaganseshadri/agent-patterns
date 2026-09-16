@@ -1,7 +1,10 @@
 import os
 import re
 
+from dotenv import load_dotenv
 from openai import OpenAI
+
+load_dotenv()  # picks up OPENROUTER_API_KEY from a local .env file, if present
 
 DEFAULT_MODEL = "anthropic/claude-sonnet-4.5"
 

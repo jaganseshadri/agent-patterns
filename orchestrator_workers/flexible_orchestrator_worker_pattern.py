@@ -5,8 +5,8 @@ from util import MissingAPIKeyError, extract_xml, llm_call
 # Model configuration — orchestrator gets a stronger model for planning and
 # synthesis, workers get a cheaper/faster model since each subtask is
 # narrower in scope. Any OpenRouter slug works for either.
-ORCHESTRATOR_MODEL = "anthropic/claude-sonnet-4.5"
-WORKER_MODEL = "anthropic/claude-haiku-4.5"
+ORCHESTRATOR_MODEL = "google/gemini-3.8-flash"
+WORKER_MODEL = "google/gemini-3.5-flash-lite"
 
 # Default guidance for how many subtasks the orchestrator should propose.
 # Pass a different value to process() to experiment with broader or
@@ -107,13 +107,26 @@ class FlexibleOrchestrator:
         context: dict | None = None,
         task_count_hint: str = DEFAULT_TASK_COUNT_HINT,
     ) -> dict:
-        """Process task by decomposing it, running subtasks, then synthesizing."""
+        """Process task by decomposing it, running subtasks, then synthesizing.
+
+        Prints the full step-by-step trace as it goes: the orchestrator's
+        initial ask -> its decomposition -> each worker's brief -> each
+        worker's output -> the orchestrator's final synthesis ask -> the
+        synthesized result. Redirect stdout to a file to capture the whole
+        run as a log.
+        """
         context = context or {}
 
-        # Step 1: Get orchestrator response
+        # ---- Step 1: Orchestrator's initial ask ----
         orchestrator_input = self._format_prompt(
             self.orchestrator_prompt, task=task, task_count_hint=task_count_hint, **context
         )
+
+        print("\n" + "=" * 80)
+        print("STEP 1 - ORCHESTRATOR'S INITIAL ASK  (model: " + self.orchestrator_model + ")")
+        print("=" * 80)
+        print(f"\n{orchestrator_input.strip()}\n")
+
         orchestrator_response = self._call_with_retry(orchestrator_input, self.orchestrator_model, "Orchestrator")
 
         # Parse orchestrator response
@@ -122,30 +135,27 @@ class FlexibleOrchestrator:
         tasks = parse_tasks(tasks_xml)
 
         print("\n" + "=" * 80)
-        print("ORCHESTRATOR ANALYSIS")
+        print("STEP 1 RESULT - ORCHESTRATOR'S DECOMPOSITION")
         print("=" * 80)
         print(f"\n{analysis}\n")
-
-        print("\n" + "=" * 80)
-        print(f"IDENTIFIED {len(tasks)} APPROACHES")
-        print("=" * 80)
+        print(f"IDENTIFIED {len(tasks)} APPROACH(ES):")
         for i, task_info in enumerate(tasks, 1):
-            print(f"\n{i}. {task_info['type'].upper()}")
-            print(f"   {task_info['description']}")
+            print(f"\n  {i}. {task_info['type'].upper()}")
+            print(f"     {task_info['description']}")
 
         if not tasks:
             print("\n❌ Orchestrator produced no usable subtasks after retries — aborting.")
-            return {"analysis": analysis, "worker_results": [], "synthesis": ""}
+            return {
+                "orchestrator_input": orchestrator_input,
+                "analysis": analysis,
+                "worker_results": [],
+                "synthesis_input": "",
+                "synthesis": "",
+            }
 
-        print("\n" + "=" * 80)
-        print("GENERATING CONTENT")
-        print("=" * 80 + "\n")
-
-        # Step 2: Process each task
+        # ---- Step 2: Each worker's brief, then its output ----
         worker_results = []
         for i, task_info in enumerate(tasks, 1):
-            print(f"[{i}/{len(tasks)}] Processing: {task_info['type']}...")
-
             worker_input = self._format_prompt(
                 self.worker_prompt,
                 original_task=task,
@@ -153,6 +163,11 @@ class FlexibleOrchestrator:
                 task_description=task_info["description"],
                 **context,
             )
+
+            print("\n" + "=" * 80)
+            print(f"STEP 2.{i} - WORKER BRIEF: {task_info['type'].upper()}  (model: {self.worker_model})")
+            print("=" * 80)
+            print(f"\n{worker_input.strip()}\n")
 
             worker_response = self._call_with_retry(
                 worker_input, self.worker_model, f"Worker '{task_info['type']}'"
@@ -164,35 +179,33 @@ class FlexibleOrchestrator:
                 print(f"⚠️  Warning: Worker '{task_info['type']}' returned no content after retries")
                 worker_content = f"[Error: Worker '{task_info['type']}' failed to generate content]"
 
+            print("-" * 80)
+            print(f"STEP 2.{i} RESULT - WORKER OUTPUT: {task_info['type'].upper()}")
+            print("-" * 80)
+            print(f"\n{worker_content}\n")
+
             worker_results.append(
                 {
                     "type": task_info["type"],
                     "description": task_info["description"],
+                    "prompt": worker_input,
                     "result": worker_content,
                 }
             )
 
-        # Display worker results
-        print("\n" + "=" * 80)
-        print("RESULTS")
-        print("=" * 80)
-        for i, result in enumerate(worker_results, 1):
-            print(f"\n{'-' * 80}")
-            print(f"Approach {i}: {result['type'].upper()}")
-            print(f"{'-' * 80}")
-            print(f"\n{result['result']}\n")
-
-        # Step 3: Synthesize worker results into one final answer
-        print("\n" + "=" * 80)
-        print("SYNTHESIZING FINAL RESULT")
-        print("=" * 80 + "\n")
-
+        # ---- Step 3: Orchestrator's final synthesis ask, then its output ----
         worker_results_block = "\n\n".join(
             f"[{r['type'].upper()}]\n{r['result']}" for r in worker_results
         )
         synthesis_input = self._format_prompt(
             self.synthesis_prompt, original_task=task, worker_results=worker_results_block, **context
         )
+
+        print("\n" + "=" * 80)
+        print("STEP 3 - ORCHESTRATOR'S FINAL SYNTHESIS ASK  (model: " + self.orchestrator_model + ")")
+        print("=" * 80)
+        print(f"\n{synthesis_input.strip()}\n")
+
         synthesis_response = self._call_with_retry(synthesis_input, self.orchestrator_model, "Synthesis")
         synthesis = extract_xml(synthesis_response, "response")
 
@@ -200,12 +213,16 @@ class FlexibleOrchestrator:
             print("⚠️  Warning: Synthesis returned no content after retries")
             synthesis = "[Error: synthesis failed to generate content]"
 
-        print(synthesis)
-        print()
+        print("-" * 80)
+        print("STEP 3 RESULT - FINAL SYNTHESIZED WIN BRIEF")
+        print("-" * 80)
+        print(f"\n{synthesis}\n")
 
         return {
+            "orchestrator_input": orchestrator_input,
             "analysis": analysis,
             "worker_results": worker_results,
+            "synthesis_input": synthesis_input,
             "synthesis": synthesis,
         }
 
