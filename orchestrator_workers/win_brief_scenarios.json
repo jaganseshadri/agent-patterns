@@ -1,0 +1,41 @@
+[
+  {
+    "id": "zylo_pricing",
+    "name": "Cheaper competitor objection (Zylo)",
+    "task": "Deal: Acme Corp, $120k ARR, enterprise. Competitor Zylo is in the deal. Buyer is the VP of Engineering. Stated objection: 'Zylo is 30% cheaper.' Deal stage: final approval, security review just started.",
+    "context": {
+      "industry": "fintech",
+      "deal_stage": "final approval"
+    }
+  },
+  {
+    "id": "stalling_close",
+    "name": "Deal near signature but stalling",
+    "task": "Deal: Brightline Logistics, $85k ARR, mid-market. Verbal agreement reached three weeks ago, contract sent for signature, but the buyer (Director of Operations) has gone quiet -- two follow-up emails unanswered, no stated objection. Legal redlines were returned and accepted two weeks ago. No competitor mentioned.",
+    "context": {
+      "industry": "logistics",
+      "deal_stage": "contract sent, awaiting signature",
+      "days_since_last_response": 12
+    }
+  },
+  {
+    "id": "security_review_blocker",
+    "name": "Security team blocking sign-off",
+    "task": "Deal: Ferro Health, $200k ARR, enterprise healthcare. The economic buyer (VP Clinical Ops) is bought in and ready to sign, but the security team has flagged concerns about data residency and SOC 2 scope during their review. No competitor mentioned. Deal stage: security review, 3 weeks in.",
+    "context": {
+      "industry": "healthcare",
+      "deal_stage": "security review",
+      "compliance_sensitive": true
+    }
+  },
+  {
+    "id": "champion_departure",
+    "name": "Champion left, new stakeholder unfamiliar with the deal",
+    "task": "Deal: Northwind Retail, $60k ARR, mid-market. Our champion (Head of E-commerce), who drove the evaluation and got internal buy-in, left the company two weeks ago. The deal was verbally close to signing. Their replacement is unfamiliar with the evaluation and has asked to 're-scope the conversation from the top.' No competitor mentioned, no stated pricing objection.",
+    "context": {
+      "industry": "retail",
+      "deal_stage": "champion transition",
+      "risk": "restart of evaluation"
+    }
+  }
+]
