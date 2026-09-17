@@ -15,17 +15,21 @@ feed into it and runs them one after another.
 
 import json
 import sys
+from pathlib import Path
 
 from flexible_orchestrator_worker_pattern import FlexibleOrchestrator
 from win_brief_prompts import ORCHESTRATOR_PROMPT, SYNTHESIS_PROMPT, WORKER_PROMPT
 
-SCENARIOS_FILE = "win_brief_scenarios.json"
+# Resolved relative to this file, not the caller's cwd, so the script works
+# whether it's run as `python run_win_brief_scenarios.py` from inside
+# orchestrator_workers/ or invoked with a path from elsewhere.
+SCENARIOS_FILE = Path(__file__).parent / "win_brief_scenarios.json"
 
 # Config: "ALL", a scenario id (str), or a scenario index (int).
 SCENARIO = "ALL"
 
 
-def load_scenarios(path: str = SCENARIOS_FILE) -> list[dict]:
+def load_scenarios(path: str | Path = SCENARIOS_FILE) -> list[dict]:
     with open(path) as f:
         return json.load(f)
 
