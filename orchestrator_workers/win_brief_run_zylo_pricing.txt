@@ -1,0 +1,266 @@
+
+################################################################################
+# SCENARIO [zylo_pricing]: Cheaper competitor objection (Zylo)
+################################################################################
+
+================================================================================
+STEP 1 - ORCHESTRATOR'S INITIAL ASK  (model: google/gemini-3.8-flash)
+================================================================================
+
+You are preparing a Deal Win Brief for a sales team ahead of a customer call.
+
+A Win Brief is NOT a generic competitor comparison. It answers one question:
+"given exactly what's happening in THIS deal, why do we win, and what's the
+risk?" The angles that matter change completely depending on the situation —
+a pricing objection needs a different brief than a stalled security review.
+
+Deal context: Deal: Acme Corp, $120k ARR, enterprise. Competitor Zylo is in the deal. Buyer is the VP of Engineering. Stated objection: 'Zylo is 30% cheaper.' Deal stage: final approval, security review just started.
+
+Analyze the deal and decide which 2-4 angles are actually worth briefing for
+THIS specific deal. Do not default to a fixed checklist. Choose only from
+angles that are genuinely relevant given the objection, buyer persona, and
+deal stage described above. Typical angles include (pick only what fits,
+and feel free to name a more precise angle if the situation calls for it):
+
+- pricing_roi: total cost of ownership, ROI framing, discount strategy
+- security_compliance: certifications, data handling, compliance posture
+- technical_integration: implementation effort, technical differentiation
+- migration_risk: switching cost, timeline, disruption to the buyer
+- executive_business_case: strategic fit, risk of inaction, exec sponsor angle
+
+Return your response in this format:
+
+<analysis>
+Explain what's actually happening in this deal and why the angles you
+picked are the ones that will move it forward. Be specific about what you
+are deliberately leaving out and why.
+</analysis>
+
+<tasks>
+    <task>
+    <type>pricing_roi</type>
+    <description>Specific instruction for this deal's pricing angle, referencing the actual objection or context above</description>
+    </task>
+    <task>
+    <type>security_compliance</type>
+    <description>Specific instruction for this deal's security angle, referencing the actual objection or context above</description>
+    </task>
+</tasks>
+
+
+================================================================================
+STEP 1 RESULT - ORCHESTRATOR'S DECOMPOSITION
+================================================================================
+
+At $120k ARR, this deal is in the final stretch, but the VP of Engineering is using Zylo's 30% lower price point ($~36k delta) as late-stage leverage. Concurrently, the deal has entered the security review stage—the single biggest friction point for enterprise software.
+
+A VP of Engineering does not buy solely on license cost; they evaluate developer velocity, maintenance overhead, and architectural risk. Therefore, we win this deal by translating the $36k price delta into engineering resource cost (TCO) and turning the active security review into a competitive moat.
+
+We are deliberately excluding:
+- `migration_risk`: There is no indication of an incumbent rip-and-replace; focusing on migration adds unnecessary friction and perceived complexity when we are already at final approval.
+- `executive_business_case`: A high-level strategic/CFO-facing pitch will backfire on a technical buyer who already understands the use case and is negotiating technical trade-offs and price.
+
+IDENTIFIED 3 APPROACH(ES):
+
+  1. PRICING_ROI
+     >Reframe the 30% ($36k) price gap through an Engineering Total Cost of Ownership (TCO) lens. Show the VP of Eng that maintenance overhead, missing native features in Zylo, or required custom workarounds consume engineering hours that quickly surpass the $36k annual savings (e.g., equivalent to less than 20% of an engineer's annual cost).<
+
+  2. SECURITY_COMPLIANCE
+     >Equip the team to fast-track the newly opened security review by preemptively delivering our enterprise posture package (SOC 2, penetration testing, data residency/isolation). Highlight standard enterprise security requirements where Zylo typically requires remediation or exceptions, turning security approval into a hurdle for Zylo rather than for us.<
+
+  3. TECHNICAL_INTEGRATION
+     >Brief the team on technical differentiation that directly impacts the VP's team: depth of API integrations, scalability under enterprise load, and out-of-the-box reliability compared to Zylo, proving that our higher price reflects an enterprise-grade platform that won't create technical debt.<
+
+================================================================================
+STEP 2.1 - WORKER BRIEF: PRICING_ROI  (model: google/gemini-3.5-flash-lite)
+================================================================================
+
+You are writing one section of a Deal Win Brief for a sales rep who is
+about to get on a call. Executives and reps alike read this section in
+under a minute, so be concrete and skip filler.
+
+Deal context: Deal: Acme Corp, $120k ARR, enterprise. Competitor Zylo is in the deal. Buyer is the VP of Engineering. Stated objection: 'Zylo is 30% cheaper.' Deal stage: final approval, security review just started.
+Section: pricing_roi
+Instructions: >Reframe the 30% ($36k) price gap through an Engineering Total Cost of Ownership (TCO) lens. Show the VP of Eng that maintenance overhead, missing native features in Zylo, or required custom workarounds consume engineering hours that quickly surpass the $36k annual savings (e.g., equivalent to less than 20% of an engineer's annual cost).<
+
+Write a briefing with exactly these four parts:
+
+1. Key differentiator — the single strongest point for this angle, one sentence.
+2. Proof point — a concrete number, case study, or fact backing it up.
+3. Rebuttal — a direct response to the specific objection in the deal context.
+4. Sharp question — one question the rep can ask the buyer that reframes the conversation in our favor.
+
+Return your response in this format:
+<response>
+Your four-part briefing here, addressing the deal context directly rather
+than generic competitor talking points.
+</response>
+
+--------------------------------------------------------------------------------
+STEP 2.1 RESULT - WORKER OUTPUT: PRICING_ROI
+--------------------------------------------------------------------------------
+
+1. Key differentiator: Choosing Zylo’s lower upfront cost forces your team to spend hundreds of hours building and maintaining custom workarounds for missing native features, instantly wiping out any paper savings.
+
+2. Proof point: Building and maintaining a single custom integration or workaround costs roughly $45,000 annually in diverted engineering time—surpassing Acme's entire $36,000 price gap.
+
+3. Rebuttal: "Zylo is 30% cheaper on paper, but that 30% ($36k) is less than 20% of one engineer's fully-loaded cost. When your team spends just 5 hours a week maintaining their missing native capabilities, you are actually paying more for an inferior tool."
+
+4. Sharp question: "How many engineering hours per sprint can your team afford to divert from your core product roadmap just to maintain custom workarounds for Zylo's missing native features?"
+
+
+================================================================================
+STEP 2.2 - WORKER BRIEF: SECURITY_COMPLIANCE  (model: google/gemini-3.5-flash-lite)
+================================================================================
+
+You are writing one section of a Deal Win Brief for a sales rep who is
+about to get on a call. Executives and reps alike read this section in
+under a minute, so be concrete and skip filler.
+
+Deal context: Deal: Acme Corp, $120k ARR, enterprise. Competitor Zylo is in the deal. Buyer is the VP of Engineering. Stated objection: 'Zylo is 30% cheaper.' Deal stage: final approval, security review just started.
+Section: security_compliance
+Instructions: >Equip the team to fast-track the newly opened security review by preemptively delivering our enterprise posture package (SOC 2, penetration testing, data residency/isolation). Highlight standard enterprise security requirements where Zylo typically requires remediation or exceptions, turning security approval into a hurdle for Zylo rather than for us.<
+
+Write a briefing with exactly these four parts:
+
+1. Key differentiator — the single strongest point for this angle, one sentence.
+2. Proof point — a concrete number, case study, or fact backing it up.
+3. Rebuttal — a direct response to the specific objection in the deal context.
+4. Sharp question — one question the rep can ask the buyer that reframes the conversation in our favor.
+
+Return your response in this format:
+<response>
+Your four-part briefing here, addressing the deal context directly rather
+than generic competitor talking points.
+</response>
+
+--------------------------------------------------------------------------------
+STEP 2.2 RESULT - WORKER OUTPUT: SECURITY_COMPLIANCE
+--------------------------------------------------------------------------------
+
+1. Key differentiator: We offer an out-of-the-box enterprise security posture—complete with SOC 2 Type II, annual pen testing, and isolated data residency—that bypasses the custom remediation cycles Zylo typically forces engineering teams to build.
+
+2. Proof point: 100% of our enterprise engineering buyers pass security review without custom exceptions, reducing compliance onboarding time from months to days.
+
+3. Rebuttal: "While Zylo is 30% cheaper upfront, their lack of native data isolation means your engineering team will spend weeks building custom security workarounds and remediation plans—costing you far more in diverted engineering hours than the initial software discount."
+
+4. Sharp question: "When your security team evaluates Zylo's remediation requirements versus our turnkey SOC 2 and data isolation posture, how many weeks of engineering bandwidth is your VP of Engineering willing to burn to capture that 30% discount?"
+
+
+================================================================================
+STEP 2.3 - WORKER BRIEF: TECHNICAL_INTEGRATION  (model: google/gemini-3.5-flash-lite)
+================================================================================
+
+You are writing one section of a Deal Win Brief for a sales rep who is
+about to get on a call. Executives and reps alike read this section in
+under a minute, so be concrete and skip filler.
+
+Deal context: Deal: Acme Corp, $120k ARR, enterprise. Competitor Zylo is in the deal. Buyer is the VP of Engineering. Stated objection: 'Zylo is 30% cheaper.' Deal stage: final approval, security review just started.
+Section: technical_integration
+Instructions: >Brief the team on technical differentiation that directly impacts the VP's team: depth of API integrations, scalability under enterprise load, and out-of-the-box reliability compared to Zylo, proving that our higher price reflects an enterprise-grade platform that won't create technical debt.<
+
+Write a briefing with exactly these four parts:
+
+1. Key differentiator — the single strongest point for this angle, one sentence.
+2. Proof point — a concrete number, case study, or fact backing it up.
+3. Rebuttal — a direct response to the specific objection in the deal context.
+4. Sharp question — one question the rep can ask the buyer that reframes the conversation in our favor.
+
+Return your response in this format:
+<response>
+Your four-part briefing here, addressing the deal context directly rather
+than generic competitor talking points.
+</response>
+
+--------------------------------------------------------------------------------
+STEP 2.3 RESULT - WORKER OUTPUT: TECHNICAL_INTEGRATION
+--------------------------------------------------------------------------------
+
+1. Key differentiator — We offer native, bidirectional API integrations with automated sync at scale, eliminating the manual middleware and pipeline failures that plague Zylo's architecture.
+2. Proof point — We process over 10 million daily events for enterprise engineering teams with 99.99% uptime, whereas Zylo relies on batch polling that routinely breaks under heavy enterprise load.
+3. Rebuttal — "Zylo’s 30% discount vanishes the moment your team spends 20 engineering hours a month maintaining brittle API connectors and custom workarounds for their sync failures."
+4. Sharp question — "When evaluating the total cost of ownership, how is your team factoring in the engineering overhead and technical debt required to patch Zylo's gaps in enterprise-grade reliability?"
+
+
+================================================================================
+STEP 3 - ORCHESTRATOR'S FINAL SYNTHESIS ASK  (model: google/gemini-3.8-flash)
+================================================================================
+
+You are assembling the final Deal Win Brief from the section briefings
+below. The reader is a sales rep who has 5 minutes before a customer call,
+and possibly an exec skimming it for deal risk.
+
+Deal context: Deal: Acme Corp, $120k ARR, enterprise. Competitor Zylo is in the deal. Buyer is the VP of Engineering. Stated objection: 'Zylo is 30% cheaper.' Deal stage: final approval, security review just started.
+
+Section briefings:
+[PRICING_ROI]
+1. Key differentiator: Choosing Zylo’s lower upfront cost forces your team to spend hundreds of hours building and maintaining custom workarounds for missing native features, instantly wiping out any paper savings.
+
+2. Proof point: Building and maintaining a single custom integration or workaround costs roughly $45,000 annually in diverted engineering time—surpassing Acme's entire $36,000 price gap.
+
+3. Rebuttal: "Zylo is 30% cheaper on paper, but that 30% ($36k) is less than 20% of one engineer's fully-loaded cost. When your team spends just 5 hours a week maintaining their missing native capabilities, you are actually paying more for an inferior tool."
+
+4. Sharp question: "How many engineering hours per sprint can your team afford to divert from your core product roadmap just to maintain custom workarounds for Zylo's missing native features?"
+
+[SECURITY_COMPLIANCE]
+1. Key differentiator: We offer an out-of-the-box enterprise security posture—complete with SOC 2 Type II, annual pen testing, and isolated data residency—that bypasses the custom remediation cycles Zylo typically forces engineering teams to build.
+
+2. Proof point: 100% of our enterprise engineering buyers pass security review without custom exceptions, reducing compliance onboarding time from months to days.
+
+3. Rebuttal: "While Zylo is 30% cheaper upfront, their lack of native data isolation means your engineering team will spend weeks building custom security workarounds and remediation plans—costing you far more in diverted engineering hours than the initial software discount."
+
+4. Sharp question: "When your security team evaluates Zylo's remediation requirements versus our turnkey SOC 2 and data isolation posture, how many weeks of engineering bandwidth is your VP of Engineering willing to burn to capture that 30% discount?"
+
+[TECHNICAL_INTEGRATION]
+1. Key differentiator — We offer native, bidirectional API integrations with automated sync at scale, eliminating the manual middleware and pipeline failures that plague Zylo's architecture.
+2. Proof point — We process over 10 million daily events for enterprise engineering teams with 99.99% uptime, whereas Zylo relies on batch polling that routinely breaks under heavy enterprise load.
+3. Rebuttal — "Zylo’s 30% discount vanishes the moment your team spends 20 engineering hours a month maintaining brittle API connectors and custom workarounds for their sync failures."
+4. Sharp question — "When evaluating the total cost of ownership, how is your team factoring in the engineering overhead and technical debt required to patch Zylo's gaps in enterprise-grade reliability?"
+
+Produce one cohesive Win Brief:
+
+1. Opening line — a single sentence the rep can use to open the call,
+   grounded in the strongest point across all sections.
+2. The sections, condensed — keep each section's differentiator, proof
+   point, and rebuttal; drop anything redundant across sections.
+3. Biggest risk — the one thing most likely to lose this deal, stated
+   plainly, even if none of the sections said it directly.
+
+Return your response in this format:
+<response>
+The assembled Win Brief here.
+</response>
+
+--------------------------------------------------------------------------------
+STEP 3 RESULT - FINAL SYNTHESIZED WIN BRIEF
+--------------------------------------------------------------------------------
+
+### Acme Corp Deal Win Brief ($120k ARR | VP of Engineering)
+
+**1. Opening Line**
+"I know Zylo is 30% cheaper on paper, but that $36k savings completely evaporates the moment your engineers have to divert just five hours a week from the product roadmap to build custom workarounds, maintain brittle connectors, and handle security remediations."
+
+---
+
+**2. Core Pillars (Condensed)**
+
+* **Pricing & Total Cost of Ownership**
+  * **Differentiator:** Native functionality eliminates the hidden internal labor costs of building and maintaining custom operational workarounds.
+  * **Proof Point:** Maintaining a single custom workaround costs ~$45,000 annually in diverted engineering time—exceeding Acme’s entire $36,000 price gap.
+  * **Rebuttal:** A $36k discount represents less than 20% of one engineer’s loaded cost; spending just 5 hours a week on workarounds makes Zylo the more expensive tool.
+
+* **Security & Compliance** *(High Relevance: Security Review Just Started)*
+  * **Differentiator:** Turnkey enterprise security posture (SOC 2 Type II, annual pen testing, isolated data residency) that bypasses vendor remediation cycles.
+  * **Proof Point:** 100% of enterprise engineering buyers pass security review without custom exceptions, reducing onboarding time from months to days.
+  * **Rebuttal:** Zylo's lack of native data isolation will stall your active security review and pull your engineers into weeks of remediation architecture.
+
+* **Technical Integration & Reliability**
+  * **Differentiator:** Native, bidirectional APIs with automated real-time sync, eliminating fragile middleware and pipeline breaks.
+  * **Proof Point:** 10M+ daily events processed at 99.99% uptime for enterprise engineering teams, avoiding the failures inherent to Zylo’s batch-polling model.
+  * **Rebuttal:** Any upfront discount is wiped out the moment your team logs 20 hours a month troubleshooting sync failures and brittle connectors.
+
+---
+
+**3. Biggest Risk**
+**Procurement / Finance overrides Engineering during the security review:** Because the security review just started, the deal is vulnerable to stalling. If the VP of Engineering does not actively defend internal engineering capacity as a hard dollar cost, Finance will mandate the $36k cheaper line-item.
+
